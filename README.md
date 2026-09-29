@@ -16,12 +16,11 @@ It fixes the common kinds of bad sync:
 
 ## Why it's fast
 
-The old approach decoded the whole movie's audio, which meant downloading the whole
-torrent (about 5 min for an episode). SubSync reads only 30-second windows spread through
-the video: 10 to 40 windows depending on length, plus a few extra around any jump it finds.
-That's roughly 15–20 % of the file, fetched 10 windows at a time. The count is capped (40, plus at most 40 extra), so a 3-hour movie costs about the same as a 2-hour one. ffmpeg seeks with HTTP
-range requests, so only those parts of the torrent are downloaded, and Stremio keeps them
-for playback anyway.
+SubSync reads only 30-second windows spread through the video: 10 to 40 windows depending
+on length, plus a few extra around any jump it finds. That's roughly 15–20 % of the file,
+fetched 10 windows at a time. The count is capped (40, plus at most 40 extra), so a 3-hour
+movie costs about the same as a 2-hour one. ffmpeg seeks with HTTP range requests, so only
+those parts of the torrent are downloaded, and Stremio keeps them for playback anyway.
 
 In each window, a neural speech detector (Silero VAD) marks where people talk. All windows
 are then decoded jointly (Viterbi): each window chooses an offset, and changing offset
@@ -53,6 +52,10 @@ cd stremio-subsync
 
 Then in Stremio: **Addons → search box → paste** `http://127.0.0.1:7979/manifest.json` → Install.
 Or open http://127.0.0.1:7979 and click **Install in Stremio**.
+
+> `127.0.0.1` is your own computer: SubSync runs locally next to Stremio, so this address is
+> the same for everyone. If port 7979 is taken, pick another with `SUBSYNC_PORT=8080 ./run.sh`
+> and use that port in the URLs above.
 
 To start it automatically at login:
 
